@@ -135,7 +135,7 @@
 
     // 文件列表数据（由 GitHub Actions 生成时填充）
     const files = [
-      "通知 - 小红书 (2026_5_24 16：48：35).html", "研究发现：吃隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
+      "研究发现：吃隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
     ];
 
     // 保存 Token
@@ -176,6 +176,9 @@
     // 获取文件的 SHA
     async function getFileSHA(filename) {
       const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(filename)}`;
+
+      console.log('请求 URL:', url);
+
       const response = await fetch(url, {
         headers: {
           'Authorization': `token ${githubToken}`,
@@ -184,7 +187,16 @@
       });
 
       if (!response.ok) {
-        throw new Error(`获取文件信息失败: ${response.statusText}`);
+        let errorMsg = `HTTP ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMsg += `: ${errorData.message}`;
+          }
+        } catch (e) {
+          // 无法解析错误响应
+        }
+        throw new Error(`获取文件信息失败: ${errorMsg}`);
       }
 
       const data = await response.json();
