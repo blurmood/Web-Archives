@@ -81,6 +81,28 @@ git push
 
 `index.html` 是自动生成的文件，手动修改会在下次推送时被覆盖。如需自定义索引页面样式或结构，应修改 `update-index.yml` 中的生成逻辑。
 
+## 删除功能
+
+### 配置 GitHub Token
+
+index.html 包含删除按钮功能，可以直接从网页界面删除不需要的归档文件。使用前需要配置 GitHub Personal Access Token：
+
+1. 访问 [GitHub Token 创建页面](https://github.com/settings/tokens/new?scopes=repo&description=Web-Archives-Manager)
+2. 确保勾选 `repo` 权限
+3. 生成 Token 并复制
+4. 在 index.html 页面顶部的配置区域粘贴 Token 并点击"保存 Token"
+5. Token 会保存在浏览器的 localStorage 中
+
+### 删除文件
+
+1. 在文件列表中找到要删除的文件
+2. 点击右侧的"删除"按钮
+3. 确认删除操作
+4. 文件会通过 GitHub API 从仓库中删除
+5. 页面会在 3 秒后自动刷新，显示更新后的列表
+
+**注意**：删除操作会直接提交到 GitHub 仓库，无法撤销。
+
 ## 部署
 
 这个仓库可以通过 GitHub Pages 部署为静态网站：

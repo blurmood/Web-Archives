@@ -12,17 +12,22 @@ jobs:
 
       - name: Generate index.html
         run: |
-          echo '<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
-          <title>文章列表</title>
-          <style>body{font-family:sans-serif;max-width:700px;margin:40px auto;padding:0 20px}
-          a{color:#0969da;font-size:1.1em;text-decoration:none}
-          a:hover{text-decoration:underline}li{margin:12px 0}</style>
-          </head><body><h1>📄 文章列表</h1><ul>' > index.html
+          # 生成文件列表的 JavaScript 数组内容（不包含外层方括号）
+          FILES_ARRAY=""
+          FIRST=true
           for f in *.html; do
             [ "$f" = "index.html" ] && continue
-            echo "<li><a href=\"$f\">$f</a></li>" >> index.html
+            [ "$f" = "index-template.html" ] && continue
+            if [ "$FIRST" = true ]; then
+              FILES_ARRAY="\"$f\""
+              FIRST=false
+            else
+              FILES_ARRAY="${FILES_ARRAY}, \"$f\""
+            fi
           done
-          echo '</ul></body></html>' >> index.html
+
+          # 读取模板并替换占位符
+          sed "s|// PLACEHOLDER_FILES|$FILES_ARRAY|g" index-template.html > index.html
 
       - name: Commit and push
         run: |
