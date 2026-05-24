@@ -95,6 +95,22 @@
     .preview-btn:hover {
       background: #0550ae;
     }
+    .edit-btn {
+      padding: 4px 12px;
+      background: #6e7781;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .edit-btn:hover {
+      background: #57606a;
+    }
+    .edit-btn:disabled {
+      background: #8c959f;
+      cursor: not-allowed;
+    }
     .delete-btn {
       padding: 4px 12px;
       background: #cf222e;
@@ -269,9 +285,12 @@
       listEl.innerHTML = files.map((filename, index) => `
         <li class="file-item">
           <div class="file-header">
-            <a href="${filename}" target="_blank">${filename}</a>
+            <a href="${filename}" target="_blank" id="link-${index}">${filename}</a>
             <button class="preview-btn" onclick="openPreview('${filename}')">
               预览
+            </button>
+            <button class="edit-btn" onclick="editFilename(${index}, '${filename}')" ${!githubToken ? 'disabled' : ''}>
+              编辑
             </button>
             <button class="delete-btn" onclick="deleteFile('${filename}')" ${!githubToken ? 'disabled' : ''}>
               删除
@@ -311,6 +330,97 @@
         closePreview();
       }
     });
+
+    // 编辑文件名
+    async function editFilename(index, oldFilename) {
+      if (!githubToken) {
+        alert('请先配置 GitHub Token');
+        return;
+      }
+
+      const newFilename = prompt('输入新的文件名:', oldFilename);
+
+      if (!newFilename || newFilename === oldFilename) {
+        return;
+      }
+
+      if (!newFilename.endsWith('.html')) {
+        alert('文件名必须以 .html 结尾');
+        return;
+      }
+
+      try {
+        // 禁用所有按钮
+        document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => btn.disabled = true);
+
+        // 获取文件内容和 SHA
+        const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(oldFilename)}`;
+        const getResponse = await fetch(getUrl, {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (!getResponse.ok) {
+          throw new Error('获取文件信息失败');
+        }
+
+        const fileData = await getResponse.json();
+
+        // 创建新文件
+        const createUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(newFilename)}`;
+        const createResponse = await fetch(createUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Rename ${oldFilename} to ${newFilename}`,
+            content: fileData.content,
+            branch: BRANCH
+          })
+        });
+
+        if (!createResponse.ok) {
+          const error = await createResponse.json();
+          throw new Error(error.message || '创建新文件失败');
+        }
+
+        // 删除旧文件
+        const deleteUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(oldFilename)}`;
+        const deleteResponse = await fetch(deleteUrl, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Rename ${oldFilename} to ${newFilename}`,
+            sha: fileData.sha,
+            branch: BRANCH
+          })
+        });
+
+        if (!deleteResponse.ok) {
+          throw new Error('删除旧文件失败');
+        }
+
+        // 更新文件列表
+        files[index] = newFilename;
+        renderFileList();
+
+        alert(`文件已重命名为 "${newFilename}"`);
+
+      } catch (error) {
+        alert(`重命名失败: ${error.message}`);
+        // 重新启用按钮
+        document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => btn.disabled = false);
+      }
+    }
 
     // 获取文件的 SHA
     async function getFileSHA(filename) {
