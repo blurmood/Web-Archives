@@ -31,8 +31,13 @@
       border-radius: 4px;
       font-family: monospace;
     }
-    .config-section button {
+    .button-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       margin-top: 10px;
+    }
+    .config-section button {
       padding: 8px 16px;
       background: #2da44e;
       color: white;
@@ -44,10 +49,10 @@
       background: #2c974b;
     }
     .status {
-      margin-top: 10px;
-      padding: 8px;
+      padding: 6px 12px;
       border-radius: 4px;
       display: none;
+      font-size: 0.9em;
     }
     .status.success {
       background: #dafbe1;
@@ -219,8 +224,10 @@
       </div>
     </label>
     <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
-    <button onclick="saveToken()">保存 Token</button>
-    <div id="token-status" class="status"></div>
+    <div class="button-row">
+      <button onclick="saveToken()">保存 Token</button>
+      <div id="token-status" class="status"></div>
+    </div>
   </div>
 
   <ul id="file-list">
@@ -255,7 +262,7 @@
 
     // 文件列表数据（由 GitHub Actions 生成时填充）
     let files = [
-      "X 上的 Miles.：“Discord搞钱指南：中国人怎么在英文社区赚美金” _ X (2026_5_24 19：00：56).html", "研究发现：吃了个隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
+      "X 上的 Miles.：“Discord搞钱指南：中国人怎么在英文社区赚美金” _ X (2026_5_24 19：00：56).html", "研究发现：吃个隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
     ];
 
     // 从 GitHub API 获取实际的文件列表
