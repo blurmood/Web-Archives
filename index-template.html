@@ -111,18 +111,74 @@
       background: #6e7781;
       cursor: not-allowed;
     }
-    .preview-container {
-      margin-top: 12px;
+    .modal {
       display: none;
-      border-top: 1px solid #d0d7de;
-      padding-top: 12px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
     }
-    .preview-container.active {
-      display: block;
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 1200px;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #d0d7de;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #24292f;
+      margin: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #57606a;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .modal-close:hover {
+      background: #f6f8fa;
+      color: #24292f;
+    }
+    .modal-body {
+      flex: 1;
+      padding: 20px;
+      overflow: hidden;
     }
     .preview-frame {
       width: 100%;
-      aspect-ratio: 4 / 3;
+      height: 100%;
       border: 1px solid #d0d7de;
       border-radius: 4px;
       background: #f6f8fa;
@@ -153,6 +209,19 @@
   <ul id="file-list">
     <!-- 文件列表将由 JavaScript 生成 -->
   </ul>
+
+  <!-- 预览模态框 -->
+  <div id="preview-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">预览</h2>
+        <button class="modal-close" onclick="closePreview()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <iframe id="preview-frame" class="preview-frame"></iframe>
+      </div>
+    </div>
+  </div>
 
   <script>
     // GitHub 仓库配置
@@ -201,37 +270,47 @@
         <li class="file-item">
           <div class="file-header">
             <a href="${filename}" target="_blank">${filename}</a>
-            <button class="preview-btn" onclick="togglePreview(${index})">
+            <button class="preview-btn" onclick="openPreview('${filename}')">
               预览
             </button>
             <button class="delete-btn" onclick="deleteFile('${filename}')" ${!githubToken ? 'disabled' : ''}>
               删除
             </button>
           </div>
-          <div class="preview-container" id="preview-${index}">
-            <iframe class="preview-frame" id="frame-${index}" data-src="${filename}"></iframe>
-          </div>
         </li>
       `).join('');
     }
 
-    // 切换预览
-    function togglePreview(index) {
-      const container = document.getElementById(`preview-${index}`);
-      const frame = document.getElementById(`frame-${index}`);
+    // 打开预览模态框
+    function openPreview(filename) {
+      const modal = document.getElementById('preview-modal');
+      const frame = document.getElementById('preview-frame');
+      const title = document.getElementById('modal-title');
 
-      if (container.classList.contains('active')) {
-        // 关闭预览
-        container.classList.remove('active');
-      } else {
-        // 打开预览
-        container.classList.add('active');
-        // 懒加载：只在第一次打开时加载 iframe
-        if (!frame.src) {
-          frame.src = frame.getAttribute('data-src');
+      title.textContent = filename;
+      frame.src = filename;
+      modal.classList.add('active');
+
+      // 点击模态框背景关闭
+      modal.onclick = function(e) {
+        if (e.target === modal) {
+          closePreview();
         }
-      }
+      };
     }
+
+    // 关闭预览模态框
+    function closePreview() {
+      const modal = document.getElementById('preview-modal');
+      modal.classList.remove('active');
+    }
+
+    // ESC 键关闭模态框
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePreview();
+      }
+    });
 
     // 获取文件的 SHA
     async function getFileSHA(filename) {
