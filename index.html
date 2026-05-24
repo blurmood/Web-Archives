@@ -3,136 +3,262 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>文章列表</title>
+  <title>归档</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-primary: #FAFAF8;
+      --bg-secondary: #F5F5F3;
+      --text-primary: #1A1A1A;
+      --text-secondary: #6B6B6B;
+      --text-tertiary: #9A9A9A;
+      --accent: #2C5F2D;
+      --accent-hover: #234A24;
+      --border: #E8E8E6;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
+      font-family: 'Spectral', serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+
+    header {
+      margin-bottom: 80px;
+    }
+
     h1 {
-      font-size: 1.5em;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 10px;
+      font-size: 2.5rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 12px;
     }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--text-tertiary);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
     .config-section {
-      background: #f6f8fa;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 64px;
+      transition: box-shadow 0.3s ease;
     }
+
+    .config-section:hover {
+      box-shadow: var(--shadow-sm);
+    }
+
+    .config-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .help-text {
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .help-text a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+
+    .help-text a:hover {
+      border-bottom-color: var(--accent);
+    }
+
     .config-section input {
       width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #d0d7de;
-      border-radius: 4px;
-      font-family: monospace;
+      padding: 12px 16px;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
+
+    .config-section input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+    }
+
     .button-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 10px;
+      gap: 16px;
+      margin-top: 20px;
     }
-    .config-section button {
-      padding: 8px 16px;
-      background: #2da44e;
-      color: white;
+
+    .btn {
+      padding: 10px 24px;
+      background: var(--accent);
+      color: var(--bg-primary);
       border: none;
-      border-radius: 6px;
+      font-family: 'Spectral', serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .config-section button:hover {
-      background: #2c974b;
+
+    .btn:hover {
+      background: var(--accent-hover);
+      box-shadow: var(--shadow-md);
     }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
     .status {
-      padding: 6px 12px;
-      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
       display: none;
-      font-size: 0.9em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
+
     .status.success {
-      background: #dafbe1;
-      color: #1a7f37;
+      color: var(--accent);
       display: block;
+      opacity: 1;
     }
+
     .status.error {
-      background: #ffebe9;
-      color: #cf222e;
+      color: #B91C1C;
       display: block;
+      opacity: 1;
     }
-    ul {
+
+    .archives-list {
       list-style: none;
-      padding: 0;
     }
+
     .file-item {
-      margin: 20px 0;
-      border: 1px solid #d0d7de;
-      border-radius: 6px;
-      padding: 12px;
-      background: #ffffff;
+      margin-bottom: 1px;
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+      transition: all 0.2s ease;
     }
+
+    .file-item:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .file-item:hover {
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-sm);
+      transform: translateX(4px);
+    }
+
     .file-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 16px;
+      padding: 20px 24px;
     }
-    a {
-      text-decoration: none;
-      color: #0969da;
-      font-size: 1.1em;
+
+    .file-link {
       flex: 1;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .preview-btn {
-      padding: 4px 12px;
-      background: #0969da;
-      color: white;
-      border: none;
-      border-radius: 4px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 1.125rem;
+      font-weight: 400;
+      transition: color 0.2s ease;
       cursor: pointer;
-      font-size: 0.9em;
     }
-    .preview-btn:hover {
-      background: #0550ae;
+
+    .file-link:hover {
+      color: var(--accent);
     }
-    .edit-btn {
-      padding: 4px 12px;
-      background: #6e7781;
-      color: white;
-      border: none;
-      border-radius: 4px;
+
+    .file-actions {
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .file-item:hover .file-actions {
+      opacity: 1;
+    }
+
+    .btn-ghost {
+      padding: 6px 16px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      font-family: 'Spectral', serif;
+      font-size: 0.8125rem;
+      font-weight: 400;
       cursor: pointer;
-      font-size: 0.9em;
+      transition: all 0.2s ease;
     }
-    .edit-btn:hover {
-      background: #57606a;
+
+    .btn-ghost:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+      background: var(--bg-primary);
     }
-    .edit-btn:disabled {
-      background: #8c959f;
+
+    .btn-ghost:disabled {
+      opacity: 0.4;
       cursor: not-allowed;
     }
-    .delete-btn {
-      padding: 4px 12px;
-      background: #cf222e;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9em;
+
+    .btn-ghost:disabled:hover {
+      color: var(--text-secondary);
+      border-color: var(--border);
+      background: transparent;
     }
-    .delete-btn:hover {
-      background: #a40e26;
+
+    .btn-ghost.danger:hover:not(:disabled) {
+      color: #B91C1C;
+      border-color: #B91C1C;
     }
-    .delete-btn:disabled {
-      background: #6e7781;
-      cursor: not-allowed;
-    }
+
     .modal {
       display: none;
       position: fixed;
@@ -140,99 +266,153 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(26, 26, 26, 0.8);
+      backdrop-filter: blur(4px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
+
     .modal.active {
       display: flex;
+      opacity: 1;
     }
+
     .modal-content {
-      background: white;
-      border-radius: 8px;
+      background: var(--bg-primary);
       width: 90%;
       max-width: 1200px;
-      height: 80vh;
+      height: 85vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: var(--shadow-lg);
+      animation: modalSlideIn 0.3s ease;
     }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
     .modal-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #d0d7de;
+      padding: 32px 40px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
     .modal-title {
-      font-size: 1.1em;
-      font-weight: 600;
-      color: #24292f;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--text-primary);
       margin: 0;
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      padding-right: 24px;
     }
+
     .modal-close {
       background: none;
       border: none;
-      font-size: 24px;
-      color: #57606a;
+      font-size: 28px;
+      color: var(--text-tertiary);
       cursor: pointer;
       padding: 0;
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px;
+      transition: all 0.2s ease;
+      line-height: 1;
     }
+
     .modal-close:hover {
-      background: #f6f8fa;
-      color: #24292f;
+      color: var(--text-primary);
+      transform: rotate(90deg);
     }
+
     .modal-body {
       flex: 1;
-      padding: 20px;
+      padding: 0;
       overflow: hidden;
     }
+
     .preview-frame {
       width: 100%;
       height: 100%;
-      border: 1px solid #d0d7de;
-      border-radius: 4px;
-      background: #f6f8fa;
+      border: none;
+      background: var(--bg-primary);
     }
-    .help-text {
-      font-size: 0.9em;
-      color: #57606a;
-      margin-top: 5px;
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 40px 24px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .file-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .file-actions {
+        opacity: 1;
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .modal-content {
+        width: 95%;
+        height: 90vh;
+      }
+
+      .modal-header {
+        padding: 24px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📄 文章列表</h1>
+  <div class="container">
+    <header>
+      <h1>归档</h1>
+      <div class="subtitle">Web Archives Collection</div>
+    </header>
 
-  <div class="config-section">
-    <label for="github-token">
-      <strong>GitHub Personal Access Token</strong>
+    <div class="config-section">
+      <label class="config-label" for="github-token">
+        GitHub Access Token
+      </label>
+      <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
       <div class="help-text">
-        需要 <code>repo</code> 权限。创建 Token:
-        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Web-Archives-Manager" target="_blank">点击这里</a>
+        需要 <code>repo</code> 权限。<a href="https://github.com/settings/tokens/new?scopes=repo&description=Web-Archives-Manager" target="_blank">创建 Token</a>
       </div>
-    </label>
-    <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
-    <div class="button-row">
-      <button onclick="saveToken()">保存 Token</button>
-      <div id="token-status" class="status"></div>
+      <div class="button-row">
+        <button class="btn" onclick="saveToken()">保存</button>
+        <div id="token-status" class="status"></div>
+      </div>
     </div>
-  </div>
 
-  <ul id="file-list">
-    <!-- 文件列表将由 JavaScript 生成 -->
-  </ul>
+    <ul class="archives-list" id="file-list">
+      <!-- 文件列表将由 JavaScript 生成 -->
+    </ul>
+  </div>
 
   <!-- 预览模态框 -->
   <div id="preview-modal" class="modal">
@@ -324,16 +504,18 @@
       listEl.innerHTML = files.map((filename, index) => `
         <li class="file-item">
           <div class="file-header">
-            <a href="javascript:void(0)" onclick="openPreview('${filename}')" id="link-${index}">${filename}</a>
-            <button class="preview-btn" onclick="window.open('${filename}', '_blank')">
-              查看
-            </button>
-            <button class="edit-btn" onclick="editFilename(${index}, '${filename}')" ${!githubToken ? 'disabled' : ''}>
-              编辑
-            </button>
-            <button class="delete-btn" onclick="deleteFile('${filename}')" ${!githubToken ? 'disabled' : ''}>
-              删除
-            </button>
+            <a class="file-link" onclick="openPreview('${filename}')" id="link-${index}">${filename}</a>
+            <div class="file-actions">
+              <button class="btn-ghost" onclick="window.open('${filename}', '_blank')">
+                查看
+              </button>
+              <button class="btn-ghost" onclick="editFilename(${index}, '${filename}')" ${!githubToken ? 'disabled' : ''}>
+                编辑
+              </button>
+              <button class="btn-ghost danger" onclick="deleteFile('${filename}')" ${!githubToken ? 'disabled' : ''}>
+                删除
+              </button>
+            </div>
           </div>
         </li>
       `).join('');
