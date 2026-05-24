@@ -3,24 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>归档</title>
+  <title>WEB ARCHIVES</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #FAFAF8;
-      --bg-secondary: #F5F5F3;
-      --text-primary: #1A1A1A;
-      --text-secondary: #6B6B6B;
-      --text-tertiary: #9A9A9A;
-      --accent: #2C5F2D;
-      --accent-hover: #234A24;
-      --border: #E8E8E6;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --klein-blue: #002FA7;
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray-100: #F5F5F5;
+      --gray-200: #E0E0E0;
+      --gray-300: #BDBDBD;
+      --gray-800: #424242;
+      --grid-unit: 8px;
     }
 
     * {
@@ -30,233 +24,217 @@
     }
 
     body {
-      font-family: 'Spectral', serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.6;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 80px 40px;
+      padding: calc(var(--grid-unit) * 10) calc(var(--grid-unit) * 4);
     }
 
     header {
-      margin-bottom: 80px;
+      margin-bottom: calc(var(--grid-unit) * 12);
+      border-bottom: 2px solid var(--black);
+      padding-bottom: calc(var(--grid-unit) * 4);
     }
 
     h1 {
-      font-size: 2.5rem;
-      font-weight: 300;
+      font-size: 3rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
-      color: var(--text-primary);
-      margin-bottom: 12px;
+      color: var(--black);
+      margin-bottom: calc(var(--grid-unit) * 2);
+      text-transform: uppercase;
     }
 
     .subtitle {
-      font-size: 1rem;
-      color: var(--text-tertiary);
-      font-weight: 300;
-      letter-spacing: 0.02em;
+      font-size: 0.875rem;
+      color: var(--gray-800);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
     .config-section {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      padding: 32px;
-      margin-bottom: 64px;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .config-section:hover {
-      box-shadow: var(--shadow-sm);
+      background: var(--gray-100);
+      border: 2px solid var(--black);
+      padding: calc(var(--grid-unit) * 4);
+      margin-bottom: calc(var(--grid-unit) * 10);
     }
 
     .config-label {
-      font-size: 0.875rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
+      color: var(--black);
+      margin-bottom: calc(var(--grid-unit) * 2);
       display: block;
     }
 
     .help-text {
-      font-size: 0.875rem;
-      color: var(--text-tertiary);
-      margin-top: 8px;
-      line-height: 1.5;
+      font-size: 0.75rem;
+      color: var(--gray-800);
+      margin-top: calc(var(--grid-unit) * 1);
+      line-height: 1.4;
     }
 
     .help-text a {
-      color: var(--accent);
+      color: var(--klein-blue);
       text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s ease;
     }
 
     .help-text a:hover {
-      border-bottom-color: var(--accent);
+      text-decoration: underline;
     }
 
     .config-section input {
       width: 100%;
-      padding: 12px 16px;
-      margin-top: 12px;
-      border: 1px solid var(--border);
-      background: var(--bg-primary);
+      padding: calc(var(--grid-unit) * 2);
+      margin-top: calc(var(--grid-unit) * 2);
+      border: 2px solid var(--black);
+      background: var(--white);
       font-family: 'Courier New', monospace;
       font-size: 0.875rem;
-      color: var(--text-primary);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      color: var(--black);
     }
 
     .config-section input:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+      border-color: var(--klein-blue);
     }
 
     .button-row {
       display: flex;
       align-items: center;
-      gap: 16px;
-      margin-top: 20px;
+      gap: calc(var(--grid-unit) * 2);
+      margin-top: calc(var(--grid-unit) * 3);
     }
 
     .btn {
-      padding: 10px 24px;
-      background: var(--accent);
-      color: var(--bg-primary);
+      padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 4);
+      background: var(--klein-blue);
+      color: var(--white);
       border: none;
-      font-family: 'Spectral', serif;
-      font-size: 0.875rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: background 0.15s ease;
     }
 
     .btn:hover {
-      background: var(--accent-hover);
-      box-shadow: var(--shadow-md);
+      background: #0025CC;
     }
 
     .btn:active {
-      transform: translateY(1px);
+      background: #001A80;
     }
 
     .status {
-      padding: 8px 16px;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
+      font-size: 0.75rem;
+      color: var(--gray-800);
       display: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
     .status.success {
-      color: var(--accent);
+      color: var(--klein-blue);
       display: block;
-      opacity: 1;
     }
 
     .status.error {
-      color: #B91C1C;
+      color: #D32F2F;
       display: block;
-      opacity: 1;
     }
 
     .archives-list {
       list-style: none;
+      border: 2px solid var(--black);
     }
 
     .file-item {
-      margin-bottom: 1px;
-      background: var(--bg-primary);
-      border-top: 1px solid var(--border);
-      transition: all 0.2s ease;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--white);
+      transition: background 0.1s ease;
     }
 
     .file-item:last-child {
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
     }
 
     .file-item:hover {
-      background: var(--bg-secondary);
-      box-shadow: var(--shadow-sm);
-      transform: translateX(4px);
+      background: var(--gray-100);
     }
 
     .file-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 16px;
-      padding: 20px 24px;
+      gap: calc(var(--grid-unit) * 3);
+      padding: calc(var(--grid-unit) * 3) calc(var(--grid-unit) * 4);
     }
 
     .file-link {
-      flex: 1;
       text-decoration: none;
-      color: var(--text-primary);
-      font-size: 1.125rem;
+      color: var(--black);
+      font-size: 1rem;
       font-weight: 400;
-      transition: color 0.2s ease;
       cursor: pointer;
+      transition: color 0.1s ease;
     }
 
     .file-link:hover {
-      color: var(--accent);
+      color: var(--klein-blue);
     }
 
     .file-actions {
       display: flex;
-      gap: 8px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .file-item:hover .file-actions {
-      opacity: 1;
+      gap: calc(var(--grid-unit) * 1);
     }
 
     .btn-ghost {
-      padding: 6px 16px;
+      padding: calc(var(--grid-unit) * 1) calc(var(--grid-unit) * 2);
       background: transparent;
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-      font-family: 'Spectral', serif;
-      font-size: 0.8125rem;
-      font-weight: 400;
+      color: var(--black);
+      border: 1px solid var(--black);
+      font-family: inherit;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.1s ease;
     }
 
     .btn-ghost:hover {
-      color: var(--text-primary);
-      border-color: var(--text-secondary);
-      background: var(--bg-primary);
+      background: var(--black);
+      color: var(--white);
     }
 
     .btn-ghost:disabled {
-      opacity: 0.4;
+      opacity: 0.3;
       cursor: not-allowed;
     }
 
     .btn-ghost:disabled:hover {
-      color: var(--text-secondary);
-      border-color: var(--border);
       background: transparent;
+      color: var(--black);
     }
 
     .btn-ghost.danger:hover:not(:disabled) {
-      color: #B91C1C;
-      border-color: #B91C1C;
+      background: #D32F2F;
+      border-color: #D32F2F;
+      color: var(--white);
     }
 
     .modal {
@@ -266,86 +244,71 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(26, 26, 26, 0.8);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.85);
       z-index: 1000;
       align-items: center;
       justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
     }
 
     .modal.active {
       display: flex;
-      opacity: 1;
     }
 
     .modal-content {
-      background: var(--bg-primary);
+      background: var(--white);
+      border: 4px solid var(--black);
       width: 90%;
-      max-width: 1200px;
-      height: 85vh;
+      max-width: 1400px;
+      height: 90vh;
       display: flex;
       flex-direction: column;
-      box-shadow: var(--shadow-lg);
-      animation: modalSlideIn 0.3s ease;
-    }
-
-    @keyframes modalSlideIn {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
     }
 
     .modal-header {
-      padding: 32px 40px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
+      padding: calc(var(--grid-unit) * 3) calc(var(--grid-unit) * 4);
+      border-bottom: 2px solid var(--black);
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
+      gap: calc(var(--grid-unit) * 3);
+      background: var(--gray-100);
     }
 
     .modal-title {
-      font-size: 1.25rem;
-      font-weight: 400;
-      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--black);
       margin: 0;
-      flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding-right: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
     .modal-close {
-      background: none;
+      background: var(--black);
       border: none;
-      font-size: 28px;
-      color: var(--text-tertiary);
+      color: var(--white);
       cursor: pointer;
       padding: 0;
-      width: 40px;
-      height: 40px;
+      width: calc(var(--grid-unit) * 5);
+      height: calc(var(--grid-unit) * 5);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
+      font-size: 24px;
+      font-weight: 700;
       line-height: 1;
+      transition: background 0.1s ease;
     }
 
     .modal-close:hover {
-      color: var(--text-primary);
-      transform: rotate(90deg);
+      background: var(--klein-blue);
     }
 
     .modal-body {
       flex: 1;
-      padding: 0;
       overflow: hidden;
     }
 
@@ -353,12 +316,12 @@
       width: 100%;
       height: 100%;
       border: none;
-      background: var(--bg-primary);
+      background: var(--white);
     }
 
     @media (max-width: 768px) {
       .container {
-        padding: 40px 24px;
+        padding: calc(var(--grid-unit) * 6) calc(var(--grid-unit) * 3);
       }
 
       h1 {
@@ -366,24 +329,17 @@
       }
 
       .file-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        grid-template-columns: 1fr;
+        gap: calc(var(--grid-unit) * 2);
       }
 
       .file-actions {
-        opacity: 1;
-        width: 100%;
-        justify-content: flex-end;
+        justify-content: flex-start;
       }
 
       .modal-content {
         width: 95%;
-        height: 90vh;
-      }
-
-      .modal-header {
-        padding: 24px;
+        height: 95vh;
       }
     }
   </style>
@@ -391,8 +347,8 @@
 <body>
   <div class="container">
     <header>
-      <h1>归档</h1>
-      <div class="subtitle">Web Archives Collection</div>
+      <h1>Web Archives</h1>
+      <div class="subtitle">Collection System</div>
     </header>
 
     <div class="config-section">
@@ -401,16 +357,16 @@
       </label>
       <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
       <div class="help-text">
-        需要 <code>repo</code> 权限。<a href="https://github.com/settings/tokens/new?scopes=repo&description=Web-Archives-Manager" target="_blank">创建 Token</a>
+        Requires <code>repo</code> scope. <a href="https://github.com/settings/tokens/new?scopes=repo&description=Web-Archives-Manager" target="_blank">Create Token</a>
       </div>
       <div class="button-row">
-        <button class="btn" onclick="saveToken()">保存</button>
+        <button class="btn" onclick="saveToken()">Save</button>
         <div id="token-status" class="status"></div>
       </div>
     </div>
 
     <ul class="archives-list" id="file-list">
-      <!-- 文件列表将由 JavaScript 生成 -->
+      <!-- File list generated by JavaScript -->
     </ul>
   </div>
 
@@ -507,13 +463,13 @@
             <a class="file-link" onclick="openPreview('${filename}')" id="link-${index}">${filename}</a>
             <div class="file-actions">
               <button class="btn-ghost" onclick="window.open('${filename}', '_blank')">
-                查看
+                View
               </button>
               <button class="btn-ghost" onclick="editFilename(${index}, '${filename}')" ${!githubToken ? 'disabled' : ''}>
-                编辑
+                Edit
               </button>
               <button class="btn-ghost danger" onclick="deleteFile('${filename}')" ${!githubToken ? 'disabled' : ''}>
-                删除
+                Delete
               </button>
             </div>
           </div>
