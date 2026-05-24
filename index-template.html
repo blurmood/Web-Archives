@@ -331,7 +331,7 @@
       }
     });
 
-    // 编辑文件名
+    // 编辑文件名（使用 Git Tree API 在单个 commit 中完成重命名）
     async function editFilename(index, oldFilename) {
       if (!githubToken) {
         alert('请先配置 GitHub Token');
@@ -353,46 +353,113 @@
         // 禁用所有按钮
         document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => btn.disabled = true);
 
-        // 获取文件内容和 SHA
-        const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(oldFilename)}`;
-        const getResponse = await fetch(getUrl, {
+        // 1. 获取当前分支的最新 commit
+        const refUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/refs/heads/${BRANCH}`;
+        const refResponse = await fetch(refUrl, {
           headers: {
             'Authorization': `token ${githubToken}`,
             'Accept': 'application/vnd.github.v3+json'
           }
         });
 
-        if (!getResponse.ok) {
-          throw new Error('获取文件信息失败');
+        if (!refResponse.ok) {
+          throw new Error('获取分支信息失败');
         }
 
-        const fileData = await getResponse.json();
+        const refData = await refResponse.json();
+        const latestCommitSha = refData.object.sha;
 
-        // 创建新文件
-        const createUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(newFilename)}`;
-        const createResponse = await fetch(createUrl, {
-          method: 'PUT',
+        // 2. 获取文件内容
+        const fileUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(oldFilename)}`;
+        const fileResponse = await fetch(fileUrl, {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (!fileResponse.ok) {
+          throw new Error('获取文件内容失败');
+        }
+
+        const fileData = await fileResponse.json();
+
+        // 3. 创建新的 blob（使用旧文件的内容）
+        const blobUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/blobs`;
+        const blobResponse = await fetch(blobUrl, {
+          method: 'POST',
           headers: {
             'Authorization': `token ${githubToken}`,
             'Accept': 'application/vnd.github.v3+json',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            message: `Rename ${oldFilename} to ${newFilename}`,
             content: fileData.content,
-            branch: BRANCH
+            encoding: 'base64'
           })
         });
 
-        if (!createResponse.ok) {
-          const error = await createResponse.json();
-          throw new Error(error.message || '创建新文件失败');
+        if (!blobResponse.ok) {
+          throw new Error('创建 blob 失败');
         }
 
-        // 删除旧文件
-        const deleteUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURIComponent(oldFilename)}`;
-        const deleteResponse = await fetch(deleteUrl, {
-          method: 'DELETE',
+        const blobData = await blobResponse.json();
+
+        // 4. 获取当前 commit 的 tree
+        const commitUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/commits/${latestCommitSha}`;
+        const commitResponse = await fetch(commitUrl, {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (!commitResponse.ok) {
+          throw new Error('获取 commit 信息失败');
+        }
+
+        const commitData = await commitResponse.json();
+        const baseTreeSha = commitData.tree.sha;
+
+        // 5. 创建新的 tree（删除旧文件，添加新文件）
+        const treeUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees`;
+        const treeResponse = await fetch(treeUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            base_tree: baseTreeSha,
+            tree: [
+              {
+                path: oldFilename,
+                mode: '100644',
+                type: 'blob',
+                sha: null  // null 表示删除
+              },
+              {
+                path: newFilename,
+                mode: '100644',
+                type: 'blob',
+                sha: blobData.sha
+              }
+            ]
+          })
+        });
+
+        if (!treeResponse.ok) {
+          const error = await treeResponse.json();
+          throw new Error(error.message || '创建 tree 失败');
+        }
+
+        const treeData = await treeResponse.json();
+
+        // 6. 创建新的 commit
+        const newCommitUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/commits`;
+        const newCommitResponse = await fetch(newCommitUrl, {
+          method: 'POST',
           headers: {
             'Authorization': `token ${githubToken}`,
             'Accept': 'application/vnd.github.v3+json',
@@ -400,13 +467,33 @@
           },
           body: JSON.stringify({
             message: `Rename ${oldFilename} to ${newFilename}`,
-            sha: fileData.sha,
-            branch: BRANCH
+            tree: treeData.sha,
+            parents: [latestCommitSha]
           })
         });
 
-        if (!deleteResponse.ok) {
-          throw new Error('删除旧文件失败');
+        if (!newCommitResponse.ok) {
+          throw new Error('创建 commit 失败');
+        }
+
+        const newCommitData = await newCommitResponse.json();
+
+        // 7. 更新分支引用
+        const updateRefUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/refs/heads/${BRANCH}`;
+        const updateRefResponse = await fetch(updateRefUrl, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sha: newCommitData.sha
+          })
+        });
+
+        if (!updateRefResponse.ok) {
+          throw new Error('更新分支引用失败');
         }
 
         // 更新文件列表
