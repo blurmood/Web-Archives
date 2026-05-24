@@ -255,7 +255,7 @@
 
     // 文件列表数据（由 GitHub Actions 生成时填充）
     let files = [
-      "研究发现：吃个隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
+      "X 上的 Miles.：“Discord搞钱指南：中国人怎么在英文社区赚美金” _ X (2026_5_24 19：00：56).html", "研究发现：吃了个隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
     ];
 
     // 从 GitHub API 获取实际的文件列表
@@ -380,6 +380,10 @@
         alert('文件名必须以 .html 结尾');
         return;
       }
+
+      // 【乐观更新】立即更新前端显示
+      files[index] = newFilename;
+      renderFileList();
 
       try {
         // 禁用所有按钮
@@ -528,14 +532,16 @@
           throw new Error('更新分支引用失败');
         }
 
-        // 更新文件列表
-        files[index] = newFilename;
-        renderFileList();
-
+        // 成功提示
         alert(`文件已重命名为 "${newFilename}"`);
 
       } catch (error) {
+        // 【回滚】恢复旧文件名
+        files[index] = oldFilename;
+        renderFileList();
+
         alert(`重命名失败: ${error.message}`);
+      } finally {
         // 重新启用按钮
         document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => btn.disabled = false);
       }

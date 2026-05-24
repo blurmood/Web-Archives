@@ -381,6 +381,10 @@
         return;
       }
 
+      // 【乐观更新】立即更新前端显示
+      files[index] = newFilename;
+      renderFileList();
+
       try {
         // 禁用所有按钮
         document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => btn.disabled = true);
@@ -528,14 +532,16 @@
           throw new Error('更新分支引用失败');
         }
 
-        // 更新文件列表
-        files[index] = newFilename;
-        renderFileList();
-
+        // 成功提示
         alert(`文件已重命名为 "${newFilename}"`);
 
       } catch (error) {
+        // 【回滚】恢复旧文件名
+        files[index] = oldFilename;
+        renderFileList();
+
         alert(`重命名失败: ${error.message}`);
+      } finally {
         // 重新启用按钮
         document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => btn.disabled = false);
       }
