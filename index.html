@@ -262,7 +262,7 @@
 
     // 文件列表数据（由 GitHub Actions 生成时填充）
     let files = [
-      "X 上的 Miles.：“Discord搞钱指南：中国人怎么在英文社区赚美金” _ X (2026_5_24 19：00：56).html", "研究发现：吃个隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
+      "X 上的 Miles.：“Discord搞钱指南：中国人怎么在英文社区赚美金” _ X (2026_5_24 19：00：56).html", "研究发现：吃个饭的隔夜饭，反而更健康？ - 今日头条 (2026_5_24 16：52：59).html"
     ];
 
     // 从 GitHub API 获取实际的文件列表
@@ -324,9 +324,9 @@
       listEl.innerHTML = files.map((filename, index) => `
         <li class="file-item">
           <div class="file-header">
-            <a href="${filename}" target="_blank" id="link-${index}">${filename}</a>
-            <button class="preview-btn" onclick="openPreview('${filename}')">
-              预览
+            <a href="javascript:void(0)" onclick="openPreview('${filename}')" id="link-${index}">${filename}</a>
+            <button class="preview-btn" onclick="window.open('${filename}', '_blank')">
+              查看
             </button>
             <button class="edit-btn" onclick="editFilename(${index}, '${filename}')" ${!githubToken ? 'disabled' : ''}>
               编辑

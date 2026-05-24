@@ -324,9 +324,9 @@
       listEl.innerHTML = files.map((filename, index) => `
         <li class="file-item">
           <div class="file-header">
-            <a href="${filename}" target="_blank" id="link-${index}">${filename}</a>
-            <button class="preview-btn" onclick="openPreview('${filename}')">
-              预览
+            <a href="javascript:void(0)" onclick="openPreview('${filename}')" id="link-${index}">${filename}</a>
+            <button class="preview-btn" onclick="window.open('${filename}', '_blank')">
+              查看
             </button>
             <button class="edit-btn" onclick="editFilename(${index}, '${filename}')" ${!githubToken ? 'disabled' : ''}>
               编辑
