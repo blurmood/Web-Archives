@@ -230,12 +230,16 @@
           throw new Error(error.message || '删除失败');
         }
 
-        alert(`文件 "${filename}" 已删除。页面将在 3 秒后刷新。`);
+        // 从文件列表中移除该文件
+        const index = files.indexOf(filename);
+        if (index > -1) {
+          files.splice(index, 1);
+        }
 
-        // 等待 GitHub Actions 更新 index.html
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        // 重新渲染列表
+        renderFileList();
+
+        alert(`文件 "${filename}" 已删除。`);
 
       } catch (error) {
         alert(`删除失败: ${error.message}`);
