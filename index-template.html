@@ -61,11 +61,52 @@
       text-transform: uppercase;
     }
 
+    .config-toggle {
+      margin-bottom: calc(var(--grid-unit) * 3);
+    }
+
+    .btn-toggle {
+      padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--black);
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: calc(var(--grid-unit) * 1);
+    }
+
+    .btn-toggle:hover {
+      background: var(--gray-100);
+    }
+
+    #toggle-icon {
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+
     .config-section {
       background: var(--gray-100);
       border: 2px solid var(--black);
       padding: calc(var(--grid-unit) * 4);
       margin-bottom: calc(var(--grid-unit) * 10);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .config-section.collapsed {
+      max-height: 0;
+      padding: 0;
+      border-width: 0;
+      margin-bottom: calc(var(--grid-unit) * 3);
     }
 
     .config-label {
@@ -351,7 +392,13 @@
       <div class="subtitle">Collection System</div>
     </header>
 
-    <div class="config-section">
+    <div class="config-toggle">
+      <button class="btn-toggle" onclick="toggleConfig()">
+        <span id="toggle-icon">+</span> Configure GitHub Token
+      </button>
+    </div>
+
+    <div class="config-section" id="config-section" style="display: none;">
       <label class="config-label" for="github-token">
         GitHub Access Token
       </label>
@@ -393,7 +440,21 @@
     let githubToken = localStorage.getItem('github_token') || '';
     if (githubToken) {
       document.getElementById('github-token').value = githubToken;
-      showStatus('token-status', 'Token 已加载', 'success');
+      showStatus('token-status', 'Token Loaded', 'success');
+    }
+
+    // 切换配置区域显示/隐藏
+    function toggleConfig() {
+      const section = document.getElementById('config-section');
+      const icon = document.getElementById('toggle-icon');
+
+      if (section.style.display === 'none') {
+        section.style.display = 'block';
+        icon.textContent = '−';
+      } else {
+        section.style.display = 'none';
+        icon.textContent = '+';
+      }
     }
 
     // 文件列表数据（由 GitHub Actions 生成时填充）
@@ -436,12 +497,15 @@
     function saveToken() {
       const token = document.getElementById('github-token').value.trim();
       if (!token) {
-        showStatus('token-status', '请输入有效的 Token', 'error');
+        showStatus('token-status', 'Invalid Token', 'error');
         return;
       }
       localStorage.setItem('github_token', token);
       githubToken = token;
-      showStatus('token-status', 'Token 已保存', 'success');
+      showStatus('token-status', 'Token Saved', 'success');
+
+      // 重新渲染列表以启用按钮
+      renderFileList();
     }
 
     // 显示状态消息
